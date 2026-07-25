@@ -267,8 +267,6 @@ async function loadImageFromUrl() {
 }
 
 async function generateAllMockups() {
-  console.log('Generate button clicked');
-
   if (!uploadedImage) {
     if (window.showAlertModal) {
       showAlertModal({
@@ -285,7 +283,6 @@ async function generateAllMockups() {
 
   const gender = document.querySelector('input[name="gender"]:checked').value;
   const studioStyle = document.getElementById('studioStyle').value;
-  console.log('Gender:', gender, 'Style:', studioStyle);
 
   showToast("Memproses gambar & caption AI...", "info", "Memproses");
   setLoadingState(true);
@@ -339,7 +336,6 @@ async function generateAllMockups() {
         showToast("Menganalisis produk...", "info", "Analisis Produk");
         productJson = await analyzeImageWithVision(imageForAnalysis, gender, studioStyle);
         productJson = enrichProductJson(productJson);
-        console.log('Vision Analysis Result:', productJson);
       } catch (visionErr) {
         console.error('Vision Analysis Failed:', visionErr);
         const visionErrMsg = extractErrorMessage(visionErr);
@@ -735,8 +731,6 @@ function enrichProductJson(json) {
   };
 
   json.body_area = bodyAreaMap[json.type] || 'body';
-
-  console.log('Enriched JSON:', json);
   return json;
 }
 
@@ -799,9 +793,7 @@ Return ONLY a single valid JSON object. No markdown code blocks. No explanation.
     `/api/proxy?action=cloudflare-vision`,
     payload,
     (r) => {
-      console.log("VISION RAW RESPONSE:", r);
       const text = r?.analysis || r?.text || '';
-      console.log("VISION RAW TEXT:", text);
 
       if (typeof text === 'object' && text !== null) {
         return text;

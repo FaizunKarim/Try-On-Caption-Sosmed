@@ -146,7 +146,6 @@ module.exports = async function handler(req, res) {
 
     try {
       const result = await callCloudflare(cfAccountId, cfApiToken, CF_VISION_MODEL, visionBody);
-      console.log('LLAMA VISION RAW RESULT:', JSON.stringify(result.data));
       const text = result.data?.result?.response || result.data?.response || (typeof result.data?.result === 'string' ? result.data.result : '') || '';
       return res.status(200).json({
         analysis: text,
