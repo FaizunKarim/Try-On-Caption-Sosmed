@@ -476,14 +476,6 @@ async function generateAllMockups() {
   const partialDone = tryOnImg || captionText;
 
   if (bothDone) {
-    if (window.showAlertModal) {
-      showAlertModal({
-        title: 'Proses Selesai!',
-        message: 'Gambar fashion AI dan caption Instagram promosi telah berhasil dibuat.',
-        type: 'success',
-        confirmText: 'Lihat Hasil'
-      });
-    }
     showToast("Gambar & Caption berhasil dibuat!", "success", "Selesai");
   } else if (partialDone) {
     showToast(tryOnImg ? "Gambar berhasil, caption terkendala." : "Caption berhasil, gambar terkendala.", "warning", "Parsial Selesai");
