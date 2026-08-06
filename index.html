@@ -100,37 +100,40 @@
             </div>
           </div>
 
-          <!-- Umur Model Input -->
+          <!-- Umur Model Input & Unit Selector Dropdown (Tahun / Bulan) -->
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Umur Model
-              (Tahun)</label>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Usia Model</label>
+              <div class="relative flex items-center">
+                <select id="ageUnitSelect" onchange="onAgeUnitSelectChange(this)"
+                  class="bg-slate-100 hover:bg-slate-200 text-teal-800 text-xs font-bold py-1 pl-3 pr-7 rounded-xl border border-slate-200/80 focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer appearance-none transition-all">
+                  <option value="Tahun" selected>Satuan: Tahun</option>
+                  <option value="Bulan">Satuan: Bulan</option>
+                </select>
+                <i class="fa-solid fa-chevron-down absolute right-2.5 text-[10px] text-teal-600 pointer-events-none"></i>
+              </div>
+            </div>
             <div class="relative flex items-center mb-2">
               <input type="number" id="modelAge" value="25" min="0" max="120" placeholder="Contoh: 25"
                 oninput="onAgeInputChange(this)" onchange="onAgeInputChange(this)"
-                class="w-full bg-slate-50 p-3.5 pr-14 rounded-2xl border border-slate-200/80 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all duration-300">
-              <span class="absolute right-4 text-xs font-bold text-slate-400 pointer-events-none">Thn</span>
+                class="w-full bg-slate-50 p-3.5 pr-20 rounded-2xl border border-slate-200/80 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all duration-300">
+              <span id="ageUnitSuffix" class="absolute right-4 text-xs font-bold text-slate-400 pointer-events-none">Tahun</span>
             </div>
-            <!-- Quick Preset Chips -->
-            <div class="flex items-center gap-1 flex-wrap pt-0.5">
+            <!-- Quick Preset Chips Container (Rendered dynamically by JS) -->
+            <div id="ageQuickPresetsContainer" class="flex items-center gap-1 flex-wrap pt-0.5">
               <span class="text-[10px] text-slate-400 font-bold mr-1">Pilih Cepat:</span>
               <button type="button" onclick="setQuickAge(1)"
-                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">1
-                th (Bayi)</button>
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">1 th (Bayi)</button>
               <button type="button" onclick="setQuickAge(3)"
-                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3
-                th (Balita)</button>
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3 th (Balita)</button>
               <button type="button" onclick="setQuickAge(8)"
-                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">8
-                th (Anak)</button>
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">8 th (Anak)</button>
               <button type="button" onclick="setQuickAge(15)"
-                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">15
-                th (Remaja)</button>
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">15 th (Remaja)</button>
               <button type="button" onclick="setQuickAge(25)"
-                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">25
-                th (Dewasa)</button>
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">25 th (Dewasa)</button>
               <button type="button" onclick="setQuickAge(65)"
-                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">65
-                th (Lansia)</button>
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">65 th (Lansia)</button>
             </div>
           </div>
 
@@ -175,55 +178,54 @@
             </div>
           </div>
 
-          <!-- Ukuran & Cut Fit Pakaian -->
+          <!-- Form Tinggi Badan (TB) & Berat Badan (BB) -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Tinggi Badan Model (TB)</label>
+              <span id="heightHelperText" class="text-[10px] text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-md border border-teal-100">
+                Rata-rata: 168 cm
+              </span>
+            </div>
+            <div class="relative flex items-center">
+              <input type="number" id="modelHeight" value="168" min="30" max="250" placeholder="Contoh: 168"
+                oninput="onMetricsInputChange()" onchange="onMetricsInputChange()"
+                class="w-full bg-slate-50 p-3.5 pr-14 rounded-2xl border border-slate-200/80 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all duration-300">
+              <span class="absolute right-4 text-xs font-bold text-slate-400 pointer-events-none">cm</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Berat Badan Model (BB)</label>
+              <span id="weightHelperText" class="text-[10px] text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-md border border-teal-100">
+                Rata-rata: 64 kg
+              </span>
+            </div>
+            <div class="relative flex items-center">
+              <input type="number" id="modelWeight" value="64" min="2" max="300" step="0.5" placeholder="Contoh: 64"
+                oninput="onMetricsInputChange()" onchange="onMetricsInputChange()"
+                class="w-full bg-slate-50 p-3.5 pr-14 rounded-2xl border border-slate-200/80 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all duration-300">
+              <span class="absolute right-4 text-xs font-bold text-slate-400 pointer-events-none">kg</span>
+            </div>
+          </div>
+
+          <!-- Ukuran Pakaian Model (Dynamic per Demographic Age Group: Infant, Kids, Adult) -->
           <div class="md:col-span-2 pt-3 border-t border-slate-100">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5">
-              Ukuran & Potongan Pakaian (Fit)
-            </label>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <label class="fit-option cursor-pointer">
-                <input type="radio" name="clothingFit" value="Regular Fit (Standar)" checked class="hidden peer"
-                  onchange="onFitChange(this)">
-                <div
-                  class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
-                  <div class="text-xs font-bold group-hover:text-teal-600">Regular Fit</div>
-                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Standar Pas
-                    Badan</div>
-                </div>
-              </label>
-
-              <label class="fit-option cursor-pointer">
-                <input type="radio" name="clothingFit" value="Slim Fit (Pres Body)" class="hidden peer"
-                  onchange="onFitChange(this)">
-                <div
-                  class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
-                  <div class="text-xs font-bold group-hover:text-teal-600">Slim Fit</div>
-                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Pres Body /
-                    Tight</div>
-                </div>
-              </label>
-
-              <label class="fit-option cursor-pointer">
-                <input type="radio" name="clothingFit" value="Oversized (Longgar / Loose)" class="hidden peer"
-                  onchange="onFitChange(this)">
-                <div
-                  class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
-                  <div class="text-xs font-bold group-hover:text-teal-600">Oversized</div>
-                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Longgar / Loose
-                  </div>
-                </div>
-              </label>
-
-              <label class="fit-option cursor-pointer">
-                <input type="radio" name="clothingFit" value="Plus Size (Ukuran Besar / Big Size)" class="hidden peer"
-                  onchange="onFitChange(this)">
-                <div
-                  class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
-                  <div class="text-xs font-bold group-hover:text-teal-600">Plus Size</div>
-                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Ukuran Jumbo /
-                    Big</div>
-                </div>
-              </label>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
+              <div class="flex items-center gap-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Ukuran Pakaian Model (Size)
+                </label>
+                <span id="sizeLineBadge" class="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-100">
+                  Adult Apparel Line
+                </span>
+              </div>
+              <div id="fitRecommendationBadge" class="text-[11px] font-bold text-teal-800 bg-teal-50 px-3 py-1 rounded-xl border border-teal-200/80 inline-flex items-center gap-1">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Rekomendasi AI: <strong>Adult M</strong> <span class="opacity-75 font-normal">(Ideal)</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="clothingSizeContainer">
+              <!-- Rendered dynamically by JS based on Age Demographic -->
             </div>
           </div>
         </div>

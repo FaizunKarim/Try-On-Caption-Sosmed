@@ -1,8 +1,552 @@
-// Single Image State
-// Format: null | { type: 'base64' | 'url', value: string, name?: string }
-let uploadedImage = null;
+// Global Age Unit State ('Tahun' | 'Bulan')
+let currentAgeUnit = 'Tahun';
 
-// Initialize Upload Area
+// Standar Antropometri Rata-rata TB (cm) & BB (kg) per Umur Persis (WHO, Permenkes 2020, & Riskesdas)
+const ANTHROPOMETRIC_DATA = {
+  'Laki-laki': {
+    0: { height: 50, weight: 3.3 },
+    1: { height: 75, weight: 9.6 },
+    2: { height: 87, weight: 12.2 },
+    3: { height: 96, weight: 14.3 },
+    4: { height: 103, weight: 16.3 },
+    5: { height: 110, weight: 18.3 },
+    6: { height: 116, weight: 20.5 },
+    7: { height: 122, weight: 23.0 },
+    8: { height: 128, weight: 25.6 },
+    9: { height: 133, weight: 28.6 },
+    10: { height: 138, weight: 32.0 },
+    11: { height: 143, weight: 36.0 },
+    12: { height: 149, weight: 40.5 },
+    13: { height: 156, weight: 45.8 },
+    14: { height: 163, weight: 51.5 },
+    15: { height: 169, weight: 56.7 },
+    16: { height: 173, weight: 61.0 },
+    17: { height: 175, weight: 64.5 },
+    18: { height: 168, weight: 63.5 },
+    25: { height: 168, weight: 64.0 },
+    35: { height: 168, weight: 66.0 },
+    45: { height: 166.5, weight: 67.5 },
+    55: { height: 164.5, weight: 66.5 },
+    65: { height: 161.0, weight: 63.5 },
+    75: { height: 158.0, weight: 59.5 },
+    80: { height: 155.0, weight: 56.0 }
+  },
+  'Perempuan': {
+    0: { height: 49, weight: 3.2 },
+    1: { height: 74, weight: 8.9 },
+    2: { height: 86, weight: 11.5 },
+    3: { height: 95, weight: 13.9 },
+    4: { height: 102, weight: 16.0 },
+    5: { height: 109, weight: 18.2 },
+    6: { height: 115, weight: 20.2 },
+    7: { height: 121, weight: 22.4 },
+    8: { height: 127, weight: 25.0 },
+    9: { height: 133, weight: 28.2 },
+    10: { height: 138, weight: 31.9 },
+    11: { height: 144, weight: 36.8 },
+    12: { height: 151, weight: 41.5 },
+    13: { height: 157, weight: 46.0 },
+    14: { height: 160, weight: 49.8 },
+    15: { height: 162, weight: 52.3 },
+    16: { height: 163, weight: 54.0 },
+    17: { height: 164, weight: 55.0 },
+    18: { height: 157, weight: 53.5 },
+    25: { height: 157, weight: 54.0 },
+    35: { height: 157, weight: 56.0 },
+    45: { height: 155.5, weight: 57.0 },
+    55: { height: 153.5, weight: 56.0 },
+    65: { height: 150.5, weight: 53.0 },
+    75: { height: 147.5, weight: 49.5 },
+    80: { height: 145.0, weight: 46.0 }
+  }
+};
+
+// Standar Pertumbuhan Bulanan Bayi & Balita WHO (0 - 36 Bulan)
+const WHO_MONTHLY_DATA = {
+  'Laki-laki': {
+    0: { height: 50.0, weight: 3.3 },
+    1: { height: 54.7, weight: 4.5 },
+    2: { height: 58.4, weight: 5.6 },
+    3: { height: 61.4, weight: 6.4 },
+    4: { height: 63.9, weight: 7.0 },
+    5: { height: 65.9, weight: 7.5 },
+    6: { height: 67.6, weight: 7.9 },
+    7: { height: 69.2, weight: 8.3 },
+    8: { height: 70.6, weight: 8.6 },
+    9: { height: 72.0, weight: 8.9 },
+    10: { height: 73.3, weight: 9.2 },
+    11: { height: 74.5, weight: 9.4 },
+    12: { height: 75.7, weight: 9.6 },
+    15: { height: 79.1, weight: 10.3 },
+    18: { height: 82.3, weight: 10.9 },
+    21: { height: 85.1, weight: 11.5 },
+    24: { height: 87.1, weight: 12.2 },
+    30: { height: 91.9, weight: 13.3 },
+    36: { height: 96.1, weight: 14.3 }
+  },
+  'Perempuan': {
+    0: { height: 49.0, weight: 3.2 },
+    1: { height: 53.7, weight: 4.2 },
+    2: { height: 57.1, weight: 5.1 },
+    3: { height: 59.8, weight: 5.8 },
+    4: { height: 62.1, weight: 6.4 },
+    5: { height: 64.0, weight: 6.9 },
+    6: { height: 65.7, weight: 7.3 },
+    7: { height: 67.3, weight: 7.7 },
+    8: { height: 68.7, weight: 8.0 },
+    9: { height: 70.1, weight: 8.2 },
+    10: { height: 71.5, weight: 8.5 },
+    11: { height: 72.8, weight: 8.7 },
+    12: { height: 74.0, weight: 8.9 },
+    15: { height: 77.5, weight: 9.6 },
+    18: { height: 80.7, weight: 10.2 },
+    21: { height: 83.7, weight: 10.9 },
+    24: { height: 85.7, weight: 11.5 },
+    30: { height: 90.7, weight: 12.7 },
+    36: { height: 95.1, weight: 13.9 }
+  }
+};
+
+function onAgeUnitSelectChange(el) {
+  const unit = el ? el.value : 'Tahun';
+  setAgeUnit(unit);
+}
+
+function setAgeUnit(unit) {
+  currentAgeUnit = unit === 'Bulan' ? 'Bulan' : 'Tahun';
+  const selectEl = document.getElementById('ageUnitSelect');
+  const suffix = document.getElementById('ageUnitSuffix');
+  const ageInput = document.getElementById('modelAge');
+
+  if (selectEl && selectEl.value !== currentAgeUnit) {
+    selectEl.value = currentAgeUnit;
+  }
+
+  if (currentAgeUnit === 'Bulan') {
+    if (suffix) suffix.innerText = "Bulan";
+    if (ageInput) {
+      ageInput.placeholder = "Contoh: 6";
+      const currentVal = parseInt(ageInput.value, 10);
+      if (isNaN(currentVal) || currentVal > 36 || currentVal === 25) {
+        ageInput.value = 6;
+      }
+    }
+  } else {
+    if (suffix) suffix.innerText = "Tahun";
+    if (ageInput) {
+      ageInput.placeholder = "Contoh: 25";
+      const currentVal = parseInt(ageInput.value, 10);
+      if (isNaN(currentVal) || currentVal <= 0) {
+        ageInput.value = 25;
+      }
+    }
+  }
+
+  updateAgePresetsUI();
+  if (ageInput) onAgeInputChange(ageInput);
+}
+
+function updateAgePresetsUI() {
+  const container = document.getElementById('ageQuickPresetsContainer');
+  if (!container) return;
+
+  if (currentAgeUnit === 'Bulan') {
+    container.innerHTML = `
+      <span class="text-[10px] text-slate-400 font-bold mr-1">Pilih Cepat:</span>
+      <button type="button" onclick="setQuickAge(1)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">1 bln (NB)</button>
+      <button type="button" onclick="setQuickAge(3)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3 bln (Bayi)</button>
+      <button type="button" onclick="setQuickAge(6)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">6 bln (Bayi)</button>
+      <button type="button" onclick="setQuickAge(12)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">12 bln (1 Th)</button>
+      <button type="button" onclick="setQuickAge(18)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">18 bln (1.5 Th)</button>
+      <button type="button" onclick="setQuickAge(24)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">24 bln (2 Th)</button>
+    `;
+  } else {
+    container.innerHTML = `
+      <span class="text-[10px] text-slate-400 font-bold mr-1">Pilih Cepat:</span>
+      <button type="button" onclick="setQuickAge(1)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">1 th (Bayi)</button>
+      <button type="button" onclick="setQuickAge(3)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3 th (Balita)</button>
+      <button type="button" onclick="setQuickAge(8)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">8 th (Anak)</button>
+      <button type="button" onclick="setQuickAge(15)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">15 th (Remaja)</button>
+      <button type="button" onclick="setQuickAge(25)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">25 th (Dewasa)</button>
+      <button type="button" onclick="setQuickAge(65)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">65 th (Lansia)</button>
+    `;
+  }
+}
+
+function getStandardMetricsForAge(ageNum, genderStr, unitStr = currentAgeUnit) {
+  const gender = (genderStr === 'Perempuan') ? 'Perempuan' : 'Laki-laki';
+  let age = parseInt(ageNum, 10);
+  if (isNaN(age) || age < 0) age = 0;
+
+  if (unitStr === 'Bulan') {
+    if (age > 36) {
+      const equivalentYears = Math.round(age / 12);
+      return getStandardMetricsForAge(equivalentYears, genderStr, 'Tahun');
+    }
+    const table = WHO_MONTHLY_DATA[gender];
+    if (table[age]) {
+      return { height: table[age].height, weight: table[age].weight };
+    }
+    const months = Object.keys(table).map(Number).sort((a, b) => a - b);
+    let lower = months[0];
+    let upper = months[months.length - 1];
+
+    for (let i = 0; i < months.length; i++) {
+      if (months[i] <= age) lower = months[i];
+      if (months[i] >= age) {
+        upper = months[i];
+        break;
+      }
+    }
+
+    if (lower === upper) {
+      return { height: table[lower].height, weight: table[lower].weight };
+    }
+
+    const factor = (age - lower) / (upper - lower);
+    const height = Math.round((table[lower].height + factor * (table[upper].height - table[lower].height)) * 10) / 10;
+    const weight = Math.round((table[lower].weight + factor * (table[upper].weight - table[lower].weight)) * 10) / 10;
+
+    return { height, weight };
+  } else {
+    const table = ANTHROPOMETRIC_DATA[gender];
+    if (age > 80) age = 80;
+
+    if (table[age]) {
+      return { height: table[age].height, weight: table[age].weight };
+    }
+
+    const ages = Object.keys(table).map(Number).sort((a, b) => a - b);
+    let lower = ages[0];
+    let upper = ages[ages.length - 1];
+
+    for (let i = 0; i < ages.length; i++) {
+      if (ages[i] <= age) lower = ages[i];
+      if (ages[i] >= age) {
+        upper = ages[i];
+        break;
+      }
+    }
+
+    if (lower === upper) {
+      return { height: table[lower].height, weight: table[lower].weight };
+    }
+
+    const factor = (age - lower) / (upper - lower);
+    const height = Math.round((table[lower].height + factor * (table[upper].height - table[lower].height)) * 10) / 10;
+    const weight = Math.round((table[lower].weight + factor * (table[upper].weight - table[lower].weight)) * 10) / 10;
+
+    return { height, weight };
+  }
+}
+
+// Dynamic Demographic Garment Sizing (ISO 8559 & SNI Apparel Standards)
+function renderClothingSizeOptions(ageNum, unitStr = currentAgeUnit) {
+  const rawAge = parseInt(ageNum, 10) || 0;
+  const ageYears = unitStr === 'Bulan' ? (rawAge / 12) : rawAge;
+  const container = document.getElementById('clothingSizeContainer');
+  const sizeLineBadge = document.getElementById('sizeLineBadge');
+  if (!container) return;
+
+  let sizeLineText = 'Adult Apparel Line';
+  let options = [];
+
+  if (ageYears <= 1.5) {
+    sizeLineText = 'Infant / Baby Line (0-1.5 Th)';
+    options = [
+      { value: 'NB (Newborn 0-1M)', label: 'NB', sub: 'Newborn (0-1M)' },
+      { value: '3-6M (Bayi 3-6 bulan)', label: '3-6M', sub: 'Bayi 3-6 Bulan' },
+      { value: '6-12M (Bayi 6-12 bulan)', label: '6-12M', sub: 'Bayi 6-12 Bulan' },
+      { value: '12-18M (Bayi 12-18 bulan)', label: '12-18M', sub: 'Bayi 12-18 Bulan' },
+      { value: '18-24M (Bayi 18-24 bulan)', label: '18-24M', sub: 'Bayi 18-24 Bulan' }
+    ];
+  } else if (ageYears <= 11) {
+    sizeLineText = 'Kids Apparel Line (2-11 Th)';
+    options = [
+      { value: 'Kids XS (Balita 2-3 th)', label: 'Kids XS', sub: 'Balita 2-3 Th' },
+      { value: 'Kids S (Balita 4-5 th)', label: 'Kids S', sub: 'Balita 4-5 Th' },
+      { value: 'Kids M (Anak 6-7 th)', label: 'Kids M', sub: 'Anak 6-7 Th' },
+      { value: 'Kids L (Anak 8-9 th)', label: 'Kids L', sub: 'Anak 8-9 Th' },
+      { value: 'Kids XL (Anak 10-11 th)', label: 'Kids XL', sub: 'Anak 10-11 Th' }
+    ];
+  } else {
+    sizeLineText = 'Adult Apparel Line (12+ Th)';
+    options = [
+      { value: 'Adult XS (Sangat Kecil / Slim)', label: 'Adult XS', sub: 'Extra Small' },
+      { value: 'Adult S (Kecil / Fit)', label: 'Adult S', sub: 'Small Fit' },
+      { value: 'Adult M (Sedang / Regular Fit)', label: 'Adult M', sub: 'Medium Ideal' },
+      { value: 'Adult L (Besar / Pas Longgar)', label: 'Adult L', sub: 'Large Fit' },
+      { value: 'Adult XL (Extra Besar / Loose)', label: 'Adult XL', sub: 'Extra Large' },
+      { value: 'Adult XXL (Jumbo / Big Size)', label: 'Adult XXL', sub: 'Jumbo 2XL' },
+      { value: 'Adult XXXL (Super Jumbo)', label: 'Adult XXXL', sub: 'Super Jumbo' }
+    ];
+  }
+
+  if (sizeLineBadge) {
+    sizeLineBadge.innerText = sizeLineText;
+  }
+
+  container.innerHTML = options.map((opt) => `
+    <label class="fit-option cursor-pointer">
+      <input type="radio" name="clothingFit" value="${opt.value}" class="hidden peer" onchange="onFitChange(this)">
+      <div class="p-2.5 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
+        <div class="text-xs font-extrabold group-hover:text-teal-600">${opt.label}</div>
+        <div class="text-[9px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">${opt.sub}</div>
+      </div>
+    </label>
+  `).join('');
+}
+
+// 4-Tier Age-Specific Recommendation Engine (Demographic Apparel Line + Body Ratio Adjustment)
+function calculateAgeStratifiedFit(heightCm, weightKg, ageNum, genderStr, unitStr = currentAgeUnit) {
+  const hM = heightCm / 100;
+  if (!hM || hM <= 0 || !weightKg || weightKg <= 0) {
+    return {
+      fitValue: 'Adult M (Sedang / Regular Fit)',
+      bmi: 0,
+      label: 'Sedang Standar',
+      badgeText: 'Adult M'
+    };
+  }
+
+  const bmi = Math.round((weightKg / (hM * hM)) * 10) / 10;
+  const rawAge = parseInt(ageNum, 10) || 0;
+  const ageYears = unitStr === 'Bulan' ? (rawAge / 12) : rawAge;
+  const std = getStandardMetricsForAge(rawAge, genderStr, unitStr);
+  const stdHM = std.height / 100;
+  const stdBmi = std.weight / (stdHM * stdHM);
+  const ratio = (weightKg / (hM * hM)) / (stdBmi || 1);
+
+  let fitValue = 'Adult M (Sedang / Regular Fit)';
+  let label = '';
+  let badgeText = 'Adult M';
+
+  // Stratum 1: Bayi & Balita Muda (0 - 1.5 Tahun) -> Infant Apparel Line
+  if (ageYears <= 1.5) {
+    if (unitStr === 'Bulan') {
+      if (rawAge <= 1) {
+        if (ratio >= 1.25) {
+          fitValue = '3-6M (Bayi 3-6 bulan)';
+          label = `Bayi ${rawAge} Bln Berisi (3-6M)`;
+          badgeText = '3-6M';
+        } else {
+          fitValue = 'NB (Newborn 0-1M)';
+          label = `Ukuran Bayi ${rawAge} Bln (NB)`;
+          badgeText = 'NB';
+        }
+      } else if (rawAge <= 4) {
+        if (ratio < 0.85) {
+          fitValue = 'NB (Newborn 0-1M)';
+          label = `Bayi ${rawAge} Bln Slim (NB)`;
+          badgeText = 'NB';
+        } else if (ratio <= 1.20) {
+          fitValue = '3-6M (Bayi 3-6 bulan)';
+          label = `Standar Bayi ${rawAge} Bln (3-6M)`;
+          badgeText = '3-6M';
+        } else {
+          fitValue = '6-12M (Bayi 6-12 bulan)';
+          label = `Bayi ${rawAge} Bln Berisi (6-12M)`;
+          badgeText = '6-12M';
+        }
+      } else if (rawAge <= 9) {
+        if (ratio < 0.85) {
+          fitValue = '3-6M (Bayi 3-6 bulan)';
+          label = `Bayi ${rawAge} Bln Slim (3-6M)`;
+          badgeText = '3-6M';
+        } else if (ratio <= 1.20) {
+          fitValue = '6-12M (Bayi 6-12 bulan)';
+          label = `Standar Bayi ${rawAge} Bln (6-12M)`;
+          badgeText = '6-12M';
+        } else {
+          fitValue = '12-18M (Bayi 12-18 bulan)';
+          label = `Bayi ${rawAge} Bln Berisi (12-18M)`;
+          badgeText = '12-18M';
+        }
+      } else if (rawAge <= 14) {
+        if (ratio < 0.85) {
+          fitValue = '6-12M (Bayi 6-12 bulan)';
+          label = `Bayi ${rawAge} Bln Slim (6-12M)`;
+          badgeText = '6-12M';
+        } else if (ratio <= 1.20) {
+          fitValue = '12-18M (Bayi 12-18 bulan)';
+          label = `Standar Bayi ${rawAge} Bln (12-18M)`;
+          badgeText = '12-18M';
+        } else {
+          fitValue = '18-24M (Bayi 18-24 bulan)';
+          label = `Bayi ${rawAge} Bln Berisi (18-24M)`;
+          badgeText = '18-24M';
+        }
+      } else {
+        if (ratio < 0.85) {
+          fitValue = '12-18M (Bayi 12-18 bulan)';
+          label = `Bayi ${rawAge} Bln Slim (12-18M)`;
+          badgeText = '12-18M';
+        } else {
+          fitValue = '18-24M (Bayi 18-24 bulan)';
+          label = `Standar Bayi ${rawAge} Bln (18-24M)`;
+          badgeText = '18-24M';
+        }
+      }
+    } else {
+      if (rawAge === 0) {
+        fitValue = 'NB (Newborn 0-1M)';
+        label = 'Ukuran Bayi Baru Lahir (NB)';
+        badgeText = 'NB';
+      } else {
+        if (ratio < 0.85) {
+          fitValue = '3-6M (Bayi 3-6 bulan)';
+          label = 'Bayi 1 Th Slim (3-6M)';
+          badgeText = '3-6M';
+        } else if (ratio <= 1.18) {
+          fitValue = '6-12M (Bayi 6-12 bulan)';
+          label = 'Standar Bayi 1 Th (6-12M)';
+          badgeText = '6-12M';
+        } else {
+          fitValue = '12-18M (Bayi 12-18 bulan)';
+          label = 'Bayi 1 Th Berisi (12-18M)';
+          badgeText = '12-18M';
+        }
+      }
+    }
+  }
+  // Stratum 2: Balita & Anak-anak (1.6 - 11 Tahun) -> Kids Apparel Line
+  else if (ageYears <= 11) {
+    const bmiDiff = bmi - stdBmi;
+    if (ageYears <= 3) {
+      if (ratio < 0.82) {
+        fitValue = 'Kids XS (Balita 2-3 th)';
+        label = 'Balita Slim (Kids XS)';
+        badgeText = 'Kids XS';
+      } else if (ratio <= 1.18) {
+        fitValue = 'Kids XS (Balita 2-3 th)';
+        label = 'Standar Balita 2-3 th (Kids XS)';
+        badgeText = 'Kids XS';
+      } else if (ratio <= 1.35) {
+        fitValue = 'Kids S (Balita 4-5 th)';
+        label = 'Balita Berisi (Kids S)';
+        badgeText = 'Kids S';
+      } else {
+        fitValue = 'Kids M (Anak 6-7 th)';
+        label = 'Balita Gemuk (Kids M)';
+        badgeText = 'Kids M';
+      }
+    } else if (ageYears <= 5) {
+      if (ratio < 0.85) {
+        fitValue = 'Kids XS (Balita 2-3 th)';
+        label = 'Balita 4-5 th Slim (Kids XS)';
+        badgeText = 'Kids XS';
+      } else if (ratio <= 1.18) {
+        fitValue = 'Kids S (Balita 4-5 th)';
+        label = 'Standar Balita 4-5 th (Kids S)';
+        badgeText = 'Kids S';
+      } else if (ratio <= 1.35) {
+        fitValue = 'Kids M (Anak 6-7 th)';
+        label = 'Balita 4-5 th Berisi (Kids M)';
+        badgeText = 'Kids M';
+      } else {
+        fitValue = 'Kids L (Anak 8-9 th)';
+        label = 'Balita 4-5 th Gemuk (Kids L)';
+        badgeText = 'Kids L';
+      }
+    } else if (ageYears <= 7) {
+      if (bmiDiff < -2.5) {
+        fitValue = 'Kids S (Balita 4-5 th)';
+        label = 'Anak 6-7 th Slim (Kids S)';
+        badgeText = 'Kids S';
+      } else if (bmiDiff <= 2.5) {
+        fitValue = 'Kids M (Anak 6-7 th)';
+        label = 'Standar Anak 6-7 th (Kids M)';
+        badgeText = 'Kids M';
+      } else {
+        fitValue = 'Kids L (Anak 8-9 th)';
+        label = 'Anak 6-7 th Berisi (Kids L)';
+        badgeText = 'Kids L';
+      }
+    } else if (ageYears <= 9) {
+      if (bmiDiff < -2.5) {
+        fitValue = 'Kids M (Anak 6-7 th)';
+        label = 'Anak 8-9 th Slim (Kids M)';
+        badgeText = 'Kids M';
+      } else if (bmiDiff <= 2.5) {
+        fitValue = 'Kids L (Anak 8-9 th)';
+        label = 'Standar Anak 8-9 th (Kids L)';
+        badgeText = 'Kids L';
+      } else {
+        fitValue = 'Kids XL (Anak 10-11 th)';
+        label = 'Anak 8-9 th Berisi (Kids XL)';
+        badgeText = 'Kids XL';
+      }
+    } else {
+      if (bmiDiff < -2.5) {
+        fitValue = 'Kids L (Anak 8-9 th)';
+        label = 'Anak 10-11 th Slim (Kids L)';
+        badgeText = 'Kids L';
+      } else {
+        fitValue = 'Kids XL (Anak 10-11 th)';
+        label = 'Standar Anak 10-11 th (Kids XL)';
+        badgeText = 'Kids XL';
+      }
+    }
+  }
+  // Stratum 3: Remaja, Dewasa & Lansia (12+ Tahun) -> Adult Apparel Line
+  else {
+    if (bmi < 16.5) {
+      fitValue = 'Adult XS (Sangat Kecil / Slim)';
+      label = `Sangat Kurus (BMI ${bmi})`;
+      badgeText = 'Adult XS';
+    } else if (bmi < 18.5) {
+      fitValue = 'Adult S (Kecil / Fit)';
+      label = `Slim Fit (BMI ${bmi})`;
+      badgeText = 'Adult S';
+    } else if (bmi <= 22.9) {
+      fitValue = 'Adult M (Sedang / Regular Fit)';
+      label = `Dewasa Ideal (BMI ${bmi})`;
+      badgeText = 'Adult M';
+    } else if (bmi <= 25.4) {
+      fitValue = 'Adult L (Besar / Pas Longgar)';
+      label = `Pas Longgar (BMI ${bmi})`;
+      badgeText = 'Adult L';
+    } else if (bmi <= 27.9) {
+      fitValue = 'Adult XL (Extra Besar / Loose)';
+      label = `Extra Large (BMI ${bmi})`;
+      badgeText = 'Adult XL';
+    } else if (bmi <= 31.9) {
+      fitValue = 'Adult XXL (Jumbo / Big Size)';
+      label = `Jumbo 2XL (BMI ${bmi})`;
+      badgeText = 'Adult XXL';
+    } else {
+      fitValue = 'Adult XXXL (Super Jumbo)';
+      label = `Super Jumbo 3XL (BMI ${bmi})`;
+      badgeText = 'Adult XXXL';
+    }
+  }
+
+  return { fitValue, bmi, label, badgeText };
+}
+
+function updateFitRecommendationUI(heightCm, weightKg, ageNum, genderStr) {
+  renderClothingSizeOptions(ageNum);
+
+  const recommendation = calculateAgeStratifiedFit(heightCm, weightKg, ageNum, genderStr);
+  const badgeEl = document.getElementById('fitRecommendationBadge');
+  if (badgeEl) {
+    badgeEl.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-amber-500 mr-1"></i> Rekomendasi AI: <strong>${recommendation.badgeText}</strong> <span class="opacity-75 font-normal">(${recommendation.label})</span>`;
+  }
+
+  const radios = document.querySelectorAll('input[name="clothingFit"]');
+  let matched = false;
+  radios.forEach(radio => {
+    if (radio.value === recommendation.fitValue) {
+      radio.checked = true;
+      matched = true;
+    }
+  });
+
+  if (!matched && radios.length > 0) {
+    radios[0].checked = true;
+  }
+}
+
 // Initialize Upload Area & Form Handlers
 window.onload = function () {
   renderUploadGrid();
@@ -13,23 +557,37 @@ window.onload = function () {
 };
 
 // Helper for Age Category Calculation
-function calculateAgeCategory(ageNum) {
+// Helper for Age Category Calculation (Supports Tahun & Bulan)
+function calculateAgeCategory(ageNum, unitStr = currentAgeUnit) {
   const age = parseInt(ageNum, 10);
   if (isNaN(age) || age < 0) {
     return { id: 'dewasa', name: 'Dewasa', range: '18-59 th' };
   }
-  if (age <= 1) {
-    return { id: 'bayi', name: 'Bayi', range: '0-1 th' };
-  } else if (age <= 5) {
-    return { id: 'balita', name: 'Balita', range: '2-5 th' };
-  } else if (age <= 11) {
-    return { id: 'anak-anak', name: 'Anak-anak', range: '6-11 th' };
-  } else if (age <= 17) {
-    return { id: 'remaja', name: 'Remaja', range: '12-17 th' };
-  } else if (age <= 59) {
-    return { id: 'dewasa', name: 'Dewasa', range: '18-59 th' };
+
+  if (unitStr === 'Bulan') {
+    if (age <= 23) {
+      return { id: 'bayi', name: 'Bayi', range: `${age} bln` };
+    } else if (age <= 60) {
+      const yrs = Math.floor(age / 12);
+      return { id: 'balita', name: 'Balita', range: `${yrs} th (${age} bln)` };
+    } else {
+      const yrs = Math.floor(age / 12);
+      return calculateAgeCategory(yrs, 'Tahun');
+    }
   } else {
-    return { id: 'lansia', name: 'Lansia', range: '≥60 th' };
+    if (age <= 1) {
+      return { id: 'bayi', name: 'Bayi', range: '0-1 th' };
+    } else if (age <= 5) {
+      return { id: 'balita', name: 'Balita', range: '2-5 th' };
+    } else if (age <= 11) {
+      return { id: 'anak-anak', name: 'Anak-anak', range: '6-11 th' };
+    } else if (age <= 17) {
+      return { id: 'remaja', name: 'Remaja', range: '12-17 th' };
+    } else if (age <= 59) {
+      return { id: 'dewasa', name: 'Dewasa', range: '18-59 th' };
+    } else {
+      return { id: 'lansia', name: 'Lansia', range: '≥60 th' };
+    }
   }
 }
 
@@ -52,14 +610,55 @@ function updateAgeCategoryPills(categoryInfo) {
   });
 }
 
+function getSelectedGender() {
+  const checked = document.querySelector('input[name="gender"]:checked');
+  return checked ? checked.value : 'Laki-laki';
+}
+
 function onAgeInputChange(el) {
   let val = el ? el.value : '';
   let num = parseInt(val, 10);
   if (isNaN(num) || num < 0) {
     num = 0;
   }
-  const categoryInfo = calculateAgeCategory(num);
+  const categoryInfo = calculateAgeCategory(num, currentAgeUnit);
   updateAgeCategoryPills(categoryInfo);
+
+  // Update default TB & BB per exact age and unit
+  const gender = getSelectedGender();
+  const metrics = getStandardMetricsForAge(num, gender, currentAgeUnit);
+
+  const hEl = document.getElementById('modelHeight');
+  const wEl = document.getElementById('modelWeight');
+  const hText = document.getElementById('heightHelperText');
+  const wText = document.getElementById('weightHelperText');
+
+  if (hEl) hEl.value = metrics.height;
+  if (wEl) wEl.value = metrics.weight;
+  if (hText) hText.innerText = `Rata-rata: ${metrics.height} cm`;
+  if (wText) wText.innerText = `Rata-rata: ${metrics.weight} kg`;
+
+  updateFitRecommendationUI(metrics.height, metrics.weight, num, gender);
+}
+
+function onMetricsInputChange() {
+  const ageData = getModelAgeData();
+  const gender = getSelectedGender();
+  const hEl = document.getElementById('modelHeight');
+  const wEl = document.getElementById('modelWeight');
+
+  const height = hEl ? (parseFloat(hEl.value) || 168) : 168;
+  const weight = wEl ? (parseFloat(wEl.value) || 64) : 64;
+
+  updateFitRecommendationUI(height, weight, ageData.age, gender);
+}
+
+function getModelMetrics() {
+  const hEl = document.getElementById('modelHeight');
+  const wEl = document.getElementById('modelWeight');
+  const height = hEl ? (parseFloat(hEl.value) || 168) : 168;
+  const weight = wEl ? (parseFloat(wEl.value) || 64) : 64;
+  return { height, weight };
 }
 
 function setQuickAge(age) {
@@ -68,8 +667,8 @@ function setQuickAge(age) {
     ageEl.value = age;
     onAgeInputChange(ageEl);
     if (window.showToast) {
-      const info = calculateAgeCategory(age);
-      showToast(`Umur diubah ke ${age} tahun (${info.name})`, 'info', 'Pengaturan Umur');
+      const info = calculateAgeCategory(age, currentAgeUnit);
+      showToast(`Usia diubah ke ${age} ${currentAgeUnit} (${info.name})`, 'info', 'Pengaturan Usia');
     }
   }
 }
@@ -78,9 +677,13 @@ function getModelAgeData() {
   const ageEl = document.getElementById('modelAge');
   let age = ageEl ? parseInt(ageEl.value, 10) : 25;
   if (isNaN(age) || age < 0) age = 25;
-  const categoryInfo = calculateAgeCategory(age);
+  const categoryInfo = calculateAgeCategory(age, currentAgeUnit);
+  const ageYears = currentAgeUnit === 'Bulan' ? (age / 12) : age;
   return {
     age: age,
+    unit: currentAgeUnit,
+    ageYears: ageYears,
+    displayString: `${age} ${currentAgeUnit}`,
     categoryName: categoryInfo.name,
     categoryRange: categoryInfo.range
   };
@@ -89,6 +692,10 @@ function getModelAgeData() {
 function onGenderChange(el) {
   if (window.showToast) {
     showToast(`Model diubah ke: ${el.value}`, 'info', 'Pengaturan Model');
+  }
+  const ageEl = document.getElementById('modelAge');
+  if (ageEl) {
+    onAgeInputChange(ageEl);
   }
 }
 
@@ -101,13 +708,13 @@ function onStyleChange(el) {
 
 function onFitChange(el) {
   if (window.showToast) {
-    showToast(`Ukuran / Fit pakaian diubah ke: ${el.value}`, 'info', 'Fit Pakaian');
+    showToast(`Ukuran pakaian diubah ke: ${el.value}`, 'info', 'Ukuran Pakaian');
   }
 }
 
 function getClothingFit() {
   const checked = document.querySelector('input[name="clothingFit"]:checked');
-  return checked ? checked.value : 'Regular Fit (Standar)';
+  return checked ? checked.value : 'Ukuran M (Sedang / Regular Fit)';
 }
 
 function renderUploadGrid() {
@@ -373,8 +980,11 @@ async function generateAllMockups() {
 
   const gender = document.querySelector('input[name="gender"]:checked').value;
   const studioStyle = document.getElementById('studioStyle').value;
-  const { age, categoryName: ageCategory } = getModelAgeData();
+  const ageData = getModelAgeData();
+  const ageDisplay = ageData.displayString;
+  const ageCategory = ageData.categoryName;
   const clothingFit = getClothingFit();
+  const { height, weight } = getModelMetrics();
 
   showToast("Memproses gambar & caption AI...", "info", "Memproses");
   setLoadingState(true);
@@ -386,7 +996,7 @@ async function generateAllMockups() {
   const imageTask = (async () => {
     try {
       showToast("Membuat gambar fashion...", "info", "Gambar AI");
-      const imgResult = await generateImageAi(uploadedImage, gender, studioStyle, age, ageCategory, clothingFit);
+      const imgResult = await generateImageAi(uploadedImage, gender, studioStyle, ageDisplay, ageCategory, clothingFit, height, weight);
       if (imgResult) {
         tryOnImg = imgResult;
         document.getElementById('tryOnPlaceholder').classList.add('hidden');
@@ -437,7 +1047,7 @@ async function generateAllMockups() {
 
     try {
       showToast("Menyusun caption Instagram...", "info", "Caption AI");
-      captionText = await generateCaptionAi(productJson, gender, studioStyle, age, ageCategory, clothingFit);
+      captionText = await generateCaptionAi(productJson, gender, studioStyle, ageDisplay, ageCategory, clothingFit, height, weight);
 
       if (captionText) {
         const capContainer = document.getElementById('captionContainer');
@@ -487,7 +1097,7 @@ async function generateAllMockups() {
 }
 
 //  STEP 1: Cloudflare Flux 2 Klein 4B  Image Generation 
-async function generateImageAi(image, gender, style, age = 25, ageCategory = 'Dewasa', clothingFit = 'Regular Fit (Standar)') {
+async function generateImageAi(image, gender, style, age = 25, ageCategory = 'Dewasa', clothingFit = 'Ukuran M (Sedang / Regular Fit)', height = 168, weight = 64) {
   const apiUrl = `/api/proxy?action=cloudflare-image`;
 
   const promptText = `You are a professional luxury fashion photographer and commercial product stylist.
@@ -677,9 +1287,11 @@ Model gender: ${gender}.
 
 Model age: ${age} years old (${ageCategory}).
 
+Model physical height: ${height} cm, weight: ${weight} kg.
+
 Clothing fit style: ${clothingFit}.
 
-Ensure the AI model visually matches a ${ageCategory.toLowerCase()} model aged approximately ${age} years old naturally styled wearing the item in a ${clothingFit} fit.
+Ensure the AI model visually matches a ${ageCategory.toLowerCase()} model aged approximately ${age} years old with physical proportions of ${height} cm height and ${weight} kg weight, naturally styled wearing the item in a ${clothingFit} fit.
 
 ========================================
 PHOTOGRAPHY
@@ -917,7 +1529,7 @@ function getAgeCategory(age) {
 }
 
 // ── STEP 3: Groq — Caption Generation (token-optimized) ─────────────────────
-async function generateCaptionAi(productJson, gender, style, age = 25, ageCategory = 'Dewasa', clothingFit = 'Regular Fit (Standar)') {
+async function generateCaptionAi(productJson, gender, style, age = 25, ageCategory = 'Dewasa', clothingFit = 'Ukuran M (Sedang / Regular Fit)', height = 168, weight = 64) {
   const apiUrl = `/api/proxy?action=groq-caption`;
 
   const productDescription = productJson
@@ -932,13 +1544,15 @@ ${productDescription}
 MODEL:
 Jenis Kelamin: ${gender}
 Umur Model: ${age} tahun (${ageCategory})
+Tinggi Badan: ${height} cm
+Berat Badan: ${weight} kg
 Potongan / Fit Pakaian: ${clothingFit}
 
 LATAR:
 ${style}
 
 TARGET AUDIENS & NADA TEKS:
-Sesuaikan gaya bahasa, penulisan, dan tone caption agar sangat relevan dengan kelompok usia ${ageCategory} (${age} tahun) serta potongan pakaian ${clothingFit}.
+Sesuaikan gaya bahasa, penulisan, dan tone caption agar sangat relevan dengan kelompok usia ${ageCategory} (${age} tahun), postur model (${height}cm / ${weight}kg), serta potongan pakaian ${clothingFit}.
 
 GUNAKAN PRINSIP COPYWRITING BERIKUT
 
