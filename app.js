@@ -1,3 +1,7 @@
+// Single Image State
+// Format: null | { type: 'base64' | 'url', value: string, name?: string }
+let uploadedImage = null;
+
 // Global Age Unit State ('Tahun' | 'Bulan')
 let currentAgeUnit = 'Tahun';
 
@@ -153,22 +157,24 @@ function updateAgePresetsUI() {
   if (currentAgeUnit === 'Bulan') {
     container.innerHTML = `
       <span class="text-[10px] text-slate-400 font-bold mr-1">Pilih Cepat:</span>
-      <button type="button" onclick="setQuickAge(1)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">1 bln (NB)</button>
-      <button type="button" onclick="setQuickAge(3)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3 bln (Bayi)</button>
-      <button type="button" onclick="setQuickAge(6)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">6 bln (Bayi)</button>
-      <button type="button" onclick="setQuickAge(12)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">12 bln (1 Th)</button>
-      <button type="button" onclick="setQuickAge(18)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">18 bln (1.5 Th)</button>
-      <button type="button" onclick="setQuickAge(24)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">24 bln (2 Th)</button>
+      <button type="button" onclick="setQuickAge(3, 'Bulan')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3 bln (Bayi)</button>
+      <button type="button" onclick="setQuickAge(6, 'Bulan')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">6 bln (Bayi)</button>
+      <button type="button" onclick="setQuickAge(9, 'Bulan')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">9 bln (Bayi)</button>
+      <button type="button" onclick="setQuickAge(12, 'Bulan')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">12 bln (1 Th)</button>
+      <button type="button" onclick="setQuickAge(18, 'Bulan')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">18 bln (1.5 Th)</button>
+      <button type="button" onclick="setQuickAge(24, 'Bulan')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">24 bln (2 Th)</button>
     `;
   } else {
     container.innerHTML = `
       <span class="text-[10px] text-slate-400 font-bold mr-1">Pilih Cepat:</span>
-      <button type="button" onclick="setQuickAge(1)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">1 th (Bayi)</button>
-      <button type="button" onclick="setQuickAge(3)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3 th (Balita)</button>
-      <button type="button" onclick="setQuickAge(8)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">8 th (Anak)</button>
-      <button type="button" onclick="setQuickAge(15)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">15 th (Remaja)</button>
-      <button type="button" onclick="setQuickAge(25)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">25 th (Dewasa)</button>
-      <button type="button" onclick="setQuickAge(65)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">65 th (Lansia)</button>
+      <button type="button" onclick="setQuickAge(3, 'Bulan')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3 bln (Bayi)</button>
+      <button type="button" onclick="setQuickAge(6, 'Bulan')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">6 bln (Bayi)</button>
+      <button type="button" onclick="setQuickAge(9, 'Bulan')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">9 bln (Bayi)</button>
+      <button type="button" onclick="setQuickAge(3, 'Tahun')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3 th (Balita)</button>
+      <button type="button" onclick="setQuickAge(8, 'Tahun')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">8 th (Anak)</button>
+      <button type="button" onclick="setQuickAge(15, 'Tahun')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">15 th (Remaja)</button>
+      <button type="button" onclick="setQuickAge(25, 'Tahun')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">25 th (Dewasa)</button>
+      <button type="button" onclick="setQuickAge(65, 'Tahun')" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">65 th (Lansia)</button>
     `;
   }
 }
@@ -548,13 +554,20 @@ function updateFitRecommendationUI(heightCm, weightKg, ageNum, genderStr) {
 }
 
 // Initialize Upload Area & Form Handlers
-window.onload = function () {
+function initApp() {
   renderUploadGrid();
   const ageEl = document.getElementById('modelAge');
   if (ageEl) {
     onAgeInputChange(ageEl);
   }
-};
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
+window.onload = initApp;
 
 // Helper for Age Category Calculation
 // Helper for Age Category Calculation (Supports Tahun & Bulan)
@@ -661,7 +674,10 @@ function getModelMetrics() {
   return { height, weight };
 }
 
-function setQuickAge(age) {
+function setQuickAge(age, unitStr = null) {
+  if (unitStr && unitStr !== currentAgeUnit) {
+    setAgeUnit(unitStr);
+  }
   const ageEl = document.getElementById('modelAge');
   if (ageEl) {
     ageEl.value = age;
