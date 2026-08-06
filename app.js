@@ -111,6 +111,87 @@ const WHO_MONTHLY_DATA = {
   }
 };
 
+function toggleAgeUnitDropdown(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById('ageUnitMenu');
+  const styleMenu = document.getElementById('studioStyleMenu');
+  if (styleMenu) {
+    styleMenu.classList.add('hidden');
+    const styleArrow = document.getElementById('studioStyleArrow');
+    if (styleArrow) styleArrow.style.transform = 'rotate(0deg)';
+  }
+  if (menu) menu.classList.toggle('hidden');
+}
+
+function selectAgeUnit(unit) {
+  const menu = document.getElementById('ageUnitMenu');
+  if (menu) menu.classList.add('hidden');
+  const txt = document.getElementById('ageUnitSelectedText');
+  if (txt) txt.innerText = unit;
+  const checkYear = document.getElementById('checkUnitYear');
+  const checkMonth = document.getElementById('checkUnitMonth');
+  if (unit === 'Bulan') {
+    if (checkYear) checkYear.classList.add('hidden');
+    if (checkMonth) checkMonth.classList.remove('hidden');
+  } else {
+    if (checkYear) checkYear.classList.remove('hidden');
+    if (checkMonth) checkMonth.classList.add('hidden');
+  }
+  setAgeUnit(unit);
+}
+
+function toggleStudioStyleDropdown(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById('studioStyleMenu');
+  const ageMenu = document.getElementById('ageUnitMenu');
+  const arrow = document.getElementById('studioStyleArrow');
+  if (ageMenu) ageMenu.classList.add('hidden');
+  if (menu) {
+    const isHidden = menu.classList.toggle('hidden');
+    if (arrow) arrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+  }
+}
+
+function selectStudioStyle(val, labelText) {
+  const selectEl = document.getElementById('studioStyle');
+  const textEl = document.getElementById('studioStyleSelectedText');
+  const menu = document.getElementById('studioStyleMenu');
+  const arrow = document.getElementById('studioStyleArrow');
+
+  if (selectEl) {
+    selectEl.value = val;
+    onStyleChange(selectEl);
+  }
+  if (textEl) textEl.innerText = labelText;
+  if (menu) menu.classList.add('hidden');
+  if (arrow) arrow.style.transform = 'rotate(0deg)';
+
+  const checkIcons = document.querySelectorAll('.check-style-icon');
+  checkIcons.forEach(icon => {
+    if (icon.getAttribute('data-val') === val) {
+      icon.classList.remove('hidden');
+    } else {
+      icon.classList.add('hidden');
+    }
+  });
+}
+
+// Global Document Listener to Close Dropdowns on Click Outside
+document.addEventListener('click', function (e) {
+  const ageContainer = document.getElementById('ageUnitDropdownContainer');
+  const styleContainer = document.getElementById('studioStyleDropdownContainer');
+  if (ageContainer && !ageContainer.contains(e.target)) {
+    const ageMenu = document.getElementById('ageUnitMenu');
+    if (ageMenu) ageMenu.classList.add('hidden');
+  }
+  if (styleContainer && !styleContainer.contains(e.target)) {
+    const styleMenu = document.getElementById('studioStyleMenu');
+    const arrow = document.getElementById('studioStyleArrow');
+    if (styleMenu) styleMenu.classList.add('hidden');
+    if (arrow) arrow.style.transform = 'rotate(0deg)';
+  }
+});
+
 function onAgeUnitSelectChange(el) {
   const unit = el ? el.value : 'Tahun';
   setAgeUnit(unit);
@@ -118,16 +199,15 @@ function onAgeUnitSelectChange(el) {
 
 function setAgeUnit(unit) {
   currentAgeUnit = unit === 'Bulan' ? 'Bulan' : 'Tahun';
-  const selectEl = document.getElementById('ageUnitSelect');
-  const suffix = document.getElementById('ageUnitSuffix');
   const ageInput = document.getElementById('modelAge');
 
-  if (selectEl && selectEl.value !== currentAgeUnit) {
-    selectEl.value = currentAgeUnit;
-  }
-
+  const txt = document.getElementById('ageUnitSelectedText');
+  if (txt) txt.innerText = currentAgeUnit;
+  const checkYear = document.getElementById('checkUnitYear');
+  const checkMonth = document.getElementById('checkUnitMonth');
   if (currentAgeUnit === 'Bulan') {
-    if (suffix) suffix.innerText = "Bulan";
+    if (checkYear) checkYear.classList.add('hidden');
+    if (checkMonth) checkMonth.classList.remove('hidden');
     if (ageInput) {
       ageInput.placeholder = "Contoh: 6";
       const currentVal = parseInt(ageInput.value, 10);
@@ -136,7 +216,8 @@ function setAgeUnit(unit) {
       }
     }
   } else {
-    if (suffix) suffix.innerText = "Tahun";
+    if (checkYear) checkYear.classList.remove('hidden');
+    if (checkMonth) checkMonth.classList.add('hidden');
     if (ageInput) {
       ageInput.placeholder = "Contoh: 25";
       const currentVal = parseInt(ageInput.value, 10);

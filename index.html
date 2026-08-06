@@ -84,38 +84,101 @@
             </div>
           </div>
 
-          <!-- Studio Style / Setting -->
+          <!-- Studio Style / Setting Custom Dropdown -->
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Gaya / Setting
-              Latar</label>
-            <div class="relative">
-              <select id="studioStyle" onchange="onStyleChange(this)"
-                class="w-full bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-300 ease-out hover:border-teal-400 hover:shadow-lg hover:shadow-teal-100/50 hover:-translate-y-0.5">
-                <option value="Studio Minimalis Bersih (Latar Putih/Abu)">Studio Minimalis Bersih (Putih/Netral)
-                </option>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Gaya / Setting Latar</label>
+            <div class="relative w-full text-left" id="studioStyleDropdownContainer">
+              <!-- Hidden native select for form data compatibility -->
+              <select id="studioStyle" class="hidden" onchange="onStyleChange(this)">
+                <option value="Studio Minimalis Bersih (Latar Putih/Abu)" selected>Studio Minimalis Bersih (Putih/Netral)</option>
                 <option value="Kafe/Urban Streetwear Modern">Urban / Outdoor Kafe Aesthetic</option>
                 <option value="Taman & Cahaya Matahari Alami">Outdoor Nature & Sunlight</option>
                 <option value="Interior Kamar Aesthetic">Interior Studio Modern</option>
               </select>
+
+              <!-- Custom Trigger Button -->
+              <button type="button" id="studioStyleBtn" onclick="toggleStudioStyleDropdown(event)"
+                class="w-full bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all duration-300 hover:border-teal-400 hover:bg-white flex items-center justify-between shadow-sm cursor-pointer">
+                <span id="studioStyleSelectedText" class="truncate">Studio Minimalis Bersih (Putih/Netral)</span>
+                <i class="fa-solid fa-chevron-down text-xs text-slate-400 transition-transform duration-300" id="studioStyleArrow"></i>
+              </button>
+
+              <!-- Floating Popover Menu -->
+              <div id="studioStyleMenu" class="hidden absolute left-0 right-0 mt-2 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-100 p-2 z-50 space-y-1 transform origin-top transition-all duration-200 max-h-60 overflow-y-auto">
+                <button type="button" onclick="selectStudioStyle('Studio Minimalis Bersih (Latar Putih/Abu)', 'Studio Minimalis Bersih (Putih/Netral)')"
+                  class="w-full flex items-center justify-between p-3 text-xs font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-800 rounded-xl transition-colors text-left group">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center group-hover:bg-teal-100 group-hover:text-teal-700 transition">
+                      <i class="fa-solid fa-camera text-xs"></i>
+                    </div>
+                    <span>Studio Minimalis Bersih (Putih/Netral)</span>
+                  </div>
+                  <i class="fa-solid fa-check text-teal-600 text-xs check-style-icon" data-val="Studio Minimalis Bersih (Latar Putih/Abu)"></i>
+                </button>
+                
+                <button type="button" onclick="selectStudioStyle('Kafe/Urban Streetwear Modern', 'Urban / Outdoor Kafe Aesthetic')"
+                  class="w-full flex items-center justify-between p-3 text-xs font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-800 rounded-xl transition-colors text-left group">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-teal-100 group-hover:text-teal-700 transition">
+                      <i class="fa-solid fa-city text-xs"></i>
+                    </div>
+                    <span>Urban / Outdoor Kafe Aesthetic</span>
+                  </div>
+                  <i class="fa-solid fa-check text-teal-600 text-xs check-style-icon hidden" data-val="Kafe/Urban Streetwear Modern"></i>
+                </button>
+
+                <button type="button" onclick="selectStudioStyle('Taman & Cahaya Matahari Alami', 'Outdoor Nature & Sunlight')"
+                  class="w-full flex items-center justify-between p-3 text-xs font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-800 rounded-xl transition-colors text-left group">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-teal-100 group-hover:text-teal-700 transition">
+                      <i class="fa-solid fa-sun text-xs"></i>
+                    </div>
+                    <span>Outdoor Nature & Sunlight</span>
+                  </div>
+                  <i class="fa-solid fa-check text-teal-600 text-xs check-style-icon hidden" data-val="Taman & Cahaya Matahari Alami"></i>
+                </button>
+
+                <button type="button" onclick="selectStudioStyle('Interior Kamar Aesthetic', 'Interior Studio Modern')"
+                  class="w-full flex items-center justify-between p-3 text-xs font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-800 rounded-xl transition-colors text-left group">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-teal-100 group-hover:text-teal-700 transition">
+                      <i class="fa-solid fa-couch text-xs"></i>
+                    </div>
+                    <span>Interior Studio Modern</span>
+                  </div>
+                  <i class="fa-solid fa-check text-teal-600 text-xs check-style-icon hidden" data-val="Interior Kamar Aesthetic"></i>
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Usia Model Input & Clean Unit Selector (Tahun / Bulan) -->
+          <!-- Usia Model Input & Custom Unit Selector Side-by-Side (Tanpa Panah) -->
           <div>
-            <div class="flex items-center justify-between mb-2">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">Usia Model</label>
-              <div class="relative flex items-center">
-                <select id="ageUnitSelect" onchange="onAgeUnitSelectChange(this)"
-                  class="bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-bold py-1 px-3 rounded-xl border border-teal-200 focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer appearance-none transition-all shadow-sm">
-                  <option value="Tahun" selected>Tahun</option>
-                  <option value="Bulan">Bulan</option>
-                </select>
-              </div>
-            </div>
-            <div class="relative flex items-center mb-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Usia Model</label>
+            <div class="flex items-center gap-2 mb-2">
               <input type="number" id="modelAge" value="25" min="0" max="120" placeholder="Contoh: 25"
                 oninput="onAgeInputChange(this)" onchange="onAgeInputChange(this)"
-                class="w-full bg-slate-50 p-3.5 pr-4 rounded-2xl border border-slate-200/80 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all duration-300">
+                class="flex-1 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all duration-300">
+              
+              <!-- Custom Dropdown Selector Side-by-Side without Arrow -->
+              <div class="relative inline-block text-left" id="ageUnitDropdownContainer">
+                <button type="button" id="ageUnitBtn" onclick="toggleAgeUnitDropdown(event)"
+                  class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold py-3.5 px-5 rounded-2xl border border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer text-center transition-all shadow-md shadow-teal-100/60 active:scale-95 flex items-center gap-1.5">
+                  <span id="ageUnitSelectedText">Tahun</span>
+                </button>
+                
+                <!-- Floating Popover Menu -->
+                <div id="ageUnitMenu" class="hidden absolute right-0 mt-2 w-32 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-100 p-1.5 z-50 transform origin-top-right transition-all duration-200">
+                  <button type="button" onclick="selectAgeUnit('Tahun')" class="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-slate-700 hover:bg-teal-50 hover:text-teal-700 rounded-xl transition-colors text-left group">
+                    <span>Tahun</span>
+                    <i id="checkUnitYear" class="fa-solid fa-check text-teal-600 text-xs"></i>
+                  </button>
+                  <button type="button" onclick="selectAgeUnit('Bulan')" class="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-slate-700 hover:bg-teal-50 hover:text-teal-700 rounded-xl transition-colors text-left group">
+                    <span>Bulan</span>
+                    <i id="checkUnitMonth" class="fa-solid fa-check text-teal-600 text-xs hidden"></i>
+                  </button>
+                </div>
+              </div>
             </div>
             <!-- Quick Preset Chips Container (Rendered dynamically by JS) -->
             <div id="ageQuickPresetsContainer" class="flex items-center gap-1 flex-wrap pt-0.5">
