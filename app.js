@@ -3,9 +3,88 @@
 let uploadedImage = null;
 
 // Initialize Upload Area
+// Initialize Upload Area & Form Handlers
 window.onload = function () {
   renderUploadGrid();
+  const ageEl = document.getElementById('modelAge');
+  if (ageEl) {
+    onAgeInputChange(ageEl);
+  }
 };
+
+// Helper for Age Category Calculation
+function calculateAgeCategory(ageNum) {
+  const age = parseInt(ageNum, 10);
+  if (isNaN(age) || age < 0) {
+    return { id: 'dewasa', name: 'Dewasa', range: '18-59 th' };
+  }
+  if (age <= 1) {
+    return { id: 'bayi', name: 'Bayi', range: '0-1 th' };
+  } else if (age <= 5) {
+    return { id: 'balita', name: 'Balita', range: '2-5 th' };
+  } else if (age <= 11) {
+    return { id: 'anak-anak', name: 'Anak-anak', range: '6-11 th' };
+  } else if (age <= 17) {
+    return { id: 'remaja', name: 'Remaja', range: '12-17 th' };
+  } else if (age <= 59) {
+    return { id: 'dewasa', name: 'Dewasa', range: '18-59 th' };
+  } else {
+    return { id: 'lansia', name: 'Lansia', range: '≥60 th' };
+  }
+}
+
+function updateAgeCategoryPills(categoryInfo) {
+  const container = document.getElementById('ageCategoryContainer');
+  const label = document.getElementById('ageCategoryLabel');
+  if (label) {
+    label.innerText = `${categoryInfo.name} (${categoryInfo.range})`;
+  }
+  if (!container) return;
+
+  const pills = container.querySelectorAll('[data-category]');
+  pills.forEach(pill => {
+    const cat = pill.getAttribute('data-category');
+    if (cat === categoryInfo.id) {
+      pill.className = "age-pill flex-1 min-w-[45px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-200 ring-2 ring-teal-400/30";
+    } else {
+      pill.className = "age-pill flex-1 min-w-[45px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60";
+    }
+  });
+}
+
+function onAgeInputChange(el) {
+  let val = el ? el.value : '';
+  let num = parseInt(val, 10);
+  if (isNaN(num) || num < 0) {
+    num = 0;
+  }
+  const categoryInfo = calculateAgeCategory(num);
+  updateAgeCategoryPills(categoryInfo);
+}
+
+function setQuickAge(age) {
+  const ageEl = document.getElementById('modelAge');
+  if (ageEl) {
+    ageEl.value = age;
+    onAgeInputChange(ageEl);
+    if (window.showToast) {
+      const info = calculateAgeCategory(age);
+      showToast(`Umur diubah ke ${age} tahun (${info.name})`, 'info', 'Pengaturan Umur');
+    }
+  }
+}
+
+function getModelAgeData() {
+  const ageEl = document.getElementById('modelAge');
+  let age = ageEl ? parseInt(ageEl.value, 10) : 25;
+  if (isNaN(age) || age < 0) age = 25;
+  const categoryInfo = calculateAgeCategory(age);
+  return {
+    age: age,
+    categoryName: categoryInfo.name,
+    categoryRange: categoryInfo.range
+  };
+}
 
 function onGenderChange(el) {
   if (window.showToast) {
@@ -18,6 +97,17 @@ function onStyleChange(el) {
     const text = el.options[el.selectedIndex].text;
     showToast(`Latar studio diubah ke: ${text}`, 'info', 'Setting Latar');
   }
+}
+
+function onFitChange(el) {
+  if (window.showToast) {
+    showToast(`Ukuran / Fit pakaian diubah ke: ${el.value}`, 'info', 'Fit Pakaian');
+  }
+}
+
+function getClothingFit() {
+  const checked = document.querySelector('input[name="clothingFit"]:checked');
+  return checked ? checked.value : 'Regular Fit (Standar)';
 }
 
 function renderUploadGrid() {
@@ -283,6 +373,8 @@ async function generateAllMockups() {
 
   const gender = document.querySelector('input[name="gender"]:checked').value;
   const studioStyle = document.getElementById('studioStyle').value;
+  const { age, categoryName: ageCategory } = getModelAgeData();
+  const clothingFit = getClothingFit();
 
   showToast("Memproses gambar & caption AI...", "info", "Memproses");
   setLoadingState(true);
@@ -294,7 +386,7 @@ async function generateAllMockups() {
   const imageTask = (async () => {
     try {
       showToast("Membuat gambar fashion...", "info", "Gambar AI");
-      const imgResult = await generateImageAi(uploadedImage, gender, studioStyle);
+      const imgResult = await generateImageAi(uploadedImage, gender, studioStyle, age, ageCategory, clothingFit);
       if (imgResult) {
         tryOnImg = imgResult;
         document.getElementById('tryOnPlaceholder').classList.add('hidden');
@@ -345,7 +437,7 @@ async function generateAllMockups() {
 
     try {
       showToast("Menyusun caption Instagram...", "info", "Caption AI");
-      captionText = await generateCaptionAi(productJson, gender, studioStyle);
+      captionText = await generateCaptionAi(productJson, gender, studioStyle, age, ageCategory, clothingFit);
 
       if (captionText) {
         const capContainer = document.getElementById('captionContainer');
@@ -403,7 +495,7 @@ async function generateAllMockups() {
 }
 
 //  STEP 1: Cloudflare Flux 2 Klein 4B  Image Generation 
-async function generateImageAi(image, gender, style) {
+async function generateImageAi(image, gender, style, age = 25, ageCategory = 'Dewasa', clothingFit = 'Regular Fit (Standar)') {
   const apiUrl = `/api/proxy?action=cloudflare-image`;
 
   const promptText = `You are a professional luxury fashion photographer and commercial product stylist.
@@ -590,6 +682,12 @@ Professional fashion posture.
 Modern commercial fashion photography.
 
 Model gender: ${gender}.
+
+Model age: ${age} years old (${ageCategory}).
+
+Clothing fit style: ${clothingFit}.
+
+Ensure the AI model visually matches a ${ageCategory.toLowerCase()} model aged approximately ${age} years old naturally styled wearing the item in a ${clothingFit} fit.
 
 ========================================
 PHOTOGRAPHY
@@ -817,8 +915,17 @@ Return ONLY a single valid JSON object. No markdown code blocks. No explanation.
   return result;
 }
 
+// Helper: Tentukan kategori umur berdasarkan angka
+function getAgeCategory(age) {
+  if (age < 13) return 'Anak-anak';
+  if (age < 20) return 'Remaja';
+  if (age < 40) return 'Dewasa Muda';
+  if (age < 60) return 'Dewasa';
+  return 'Senior';
+}
+
 // ── STEP 3: Groq — Caption Generation (token-optimized) ─────────────────────
-async function generateCaptionAi(productJson, gender, style) {
+async function generateCaptionAi(productJson, gender, style, age = 25, ageCategory = 'Dewasa', clothingFit = 'Regular Fit (Standar)') {
   const apiUrl = `/api/proxy?action=groq-caption`;
 
   const productDescription = productJson
@@ -831,10 +938,15 @@ PRODUK:
 ${productDescription}
 
 MODEL:
-${gender}
+Jenis Kelamin: ${gender}
+Umur Model: ${age} tahun (${ageCategory})
+Potongan / Fit Pakaian: ${clothingFit}
 
 LATAR:
 ${style}
+
+TARGET AUDIENS & NADA TEKS:
+Sesuaikan gaya bahasa, penulisan, dan tone caption agar sangat relevan dengan kelompok usia ${ageCategory} (${age} tahun) serta potongan pakaian ${clothingFit}.
 
 GUNAKAN PRINSIP COPYWRITING BERIKUT
 
