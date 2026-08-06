@@ -9,8 +9,13 @@ Designed for e-commerce, fashion brands, and social media marketers.
 ## ✨ Fitur Utama
 
 - **🤖 AI Try-On Image Generation**: Menghasilkan gambar mockup model fashion manusia yang secara alami mengenakan produk Anda menggunakan **Cloudflare Flux 2 Klein 4B**.
+- **🎯 Pengaturan Model Presisi**:
+  - **Jenis Kelamin**: Laki-laki / Perempuan.
+  - **Setting Latar**: Studio Minimalis, Urban Kafe, Outdoor Nature, Interior Modern.
+  - **Form Umur & Kategori Usia Otomatis**: Menghitung otomatis 6 kelompok usia (*Bayi, Balita, Anak-anak, Remaja, Dewasa, Lansia*) berdasarkan angka umur yang diinput, dilengkapi tombol *Pilih Cepat (Quick Presets)*.
+  - **Ukuran & Potongan Pakaian (Fit)**: Pilihan *Regular Fit, Slim Fit, Oversized,* dan *Plus Size* yang secara khusus menyesuaikan bentuk pemakaian produk pada model AI.
 - **👁️ Single-Call Vision Recognition**: Mengenali jenis produk, warna, bahan, dan atribut fashion secara otomatis dari foto yang diunggah menggunakan **Cloudflare Llama 3.2 11B Vision**.
-- **✍️ Copywriting Caption Instagram**: Menyusun caption promosi berdaya jual tinggi (Hook, Lifestyle, CTA, & Hashtag) berbasis **Groq Llama 3.3 70B**.
+- **✍️ Copywriting Caption Instagram**: Menyusun caption promosi berdaya jual tinggi (Hook, Lifestyle, CTA, & Hashtag) berbasis **Groq Llama 3.3 70B** yang disesuaikan dengan target usia dan potongan pakaian.
 - **⚡ Parallel Async Pipeline**: Proses pembuatan gambar dan penyusunan caption berjalan secara simultan (paralel) untuk kecepatan 2x lebih tinggi.
 - **🛡️ Secure API Proxy**: Seluruh API Key (Cloudflare & Groq) terlindungi aman di server-side via Vercel Serverless Function.
 
