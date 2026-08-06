@@ -15,15 +15,15 @@
   <link rel="apple-touch-icon" href="images/icon.webp">
   <meta property="og:title" content="Katalogin - Katalog Try-On AI">
   <meta property="og:description" content="Katalogin adalah platform untuk membuat katalog produk try-on otomatis.">
-  <meta property="og:image" content="https://katalogin-ai.vercel.app/images/katalogin.webp">
-  <meta property="og:image:secure_url" content="https://katalogin-ai.vercel.app/images/katalogin.webp">
+  <meta property="og:image" content="https://katalogin-ai.vercel.app/images/icon.webp">
+  <meta property="og:image:secure_url" content="https://katalogin-ai.vercel.app/images/icon.webp">
   <meta property="og:image:type" content="image/webp">
   <meta property="og:url" content="https://katalogin-ai.vercel.app/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Katalogin - Katalog Try-On AI">
   <meta name="twitter:description" content="Katalogin adalah platform untuk membuat katalog produk try-on otomatis.">
-  <meta name="twitter:image" content="https://katalogin-ai.vercel.app/images/katalogin.webp">
+  <meta name="twitter:image" content="https://katalogin-ai.vercel.app/images/icon.webp">
 </head>
 
 <body class="bg-slate-50 min-h-screen text-slate-800 antialiased flex flex-col justify-between">
@@ -102,7 +102,8 @@
 
           <!-- Umur Model Input -->
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Umur Model (Tahun)</label>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Umur Model
+              (Tahun)</label>
             <div class="relative flex items-center mb-2">
               <input type="number" id="modelAge" value="25" min="0" max="120" placeholder="Contoh: 25"
                 oninput="onAgeInputChange(this)" onchange="onAgeInputChange(this)"
@@ -112,12 +113,24 @@
             <!-- Quick Preset Chips -->
             <div class="flex items-center gap-1 flex-wrap pt-0.5">
               <span class="text-[10px] text-slate-400 font-bold mr-1">Pilih Cepat:</span>
-              <button type="button" onclick="setQuickAge(1)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">1 th (Bayi)</button>
-              <button type="button" onclick="setQuickAge(3)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3 th (Balita)</button>
-              <button type="button" onclick="setQuickAge(8)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">8 th (Anak)</button>
-              <button type="button" onclick="setQuickAge(15)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">15 th (Remaja)</button>
-              <button type="button" onclick="setQuickAge(25)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">25 th (Dewasa)</button>
-              <button type="button" onclick="setQuickAge(65)" class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">65 th (Lansia)</button>
+              <button type="button" onclick="setQuickAge(1)"
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">1
+                th (Bayi)</button>
+              <button type="button" onclick="setQuickAge(3)"
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">3
+                th (Balita)</button>
+              <button type="button" onclick="setQuickAge(8)"
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">8
+                th (Anak)</button>
+              <button type="button" onclick="setQuickAge(15)"
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">15
+                th (Remaja)</button>
+              <button type="button" onclick="setQuickAge(25)"
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">25
+                th (Dewasa)</button>
+              <button type="button" onclick="setQuickAge(65)"
+                class="px-2 py-0.5 bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 rounded-lg text-[10px] font-bold border border-slate-200/80 transition cursor-pointer">65
+                th (Lansia)</button>
             </div>
           </div>
 
@@ -127,28 +140,36 @@
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-500">
                 Kategori Usia <span class="text-[10px] text-teal-600 font-normal lowercase">(otomatis)</span>
               </label>
-              <span id="ageCategoryLabel" class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
+              <span id="ageCategoryLabel"
+                class="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
                 Dewasa (18-59 th)
               </span>
             </div>
             <!-- Category Pills Display (Read-Only Badges) -->
-            <div class="flex flex-wrap items-center gap-1 bg-slate-50 p-2 rounded-2xl border border-slate-200/80" id="ageCategoryContainer">
-              <div data-category="bayi" class="age-pill flex-1 min-w-[45px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60">
+            <div class="flex flex-wrap items-center gap-1 bg-slate-50 p-2 rounded-2xl border border-slate-200/80"
+              id="ageCategoryContainer">
+              <div data-category="bayi"
+                class="age-pill flex-1 min-w-[45px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60">
                 Bayi
               </div>
-              <div data-category="balita" class="age-pill flex-1 min-w-[50px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60">
+              <div data-category="balita"
+                class="age-pill flex-1 min-w-[50px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60">
                 Balita
               </div>
-              <div data-category="anak-anak" class="age-pill flex-1 min-w-[65px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60">
+              <div data-category="anak-anak"
+                class="age-pill flex-1 min-w-[65px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60">
                 Anak2
               </div>
-              <div data-category="remaja" class="age-pill flex-1 min-w-[55px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60">
+              <div data-category="remaja"
+                class="age-pill flex-1 min-w-[55px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60">
                 Remaja
               </div>
-              <div data-category="dewasa" class="age-pill flex-1 min-w-[55px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-200 ring-2 ring-teal-400/30">
+              <div data-category="dewasa"
+                class="age-pill flex-1 min-w-[55px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-200 ring-2 ring-teal-400/30">
                 Dewasa
               </div>
-              <div data-category="lansia" class="age-pill flex-1 min-w-[50px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60">
+              <div data-category="lansia"
+                class="age-pill flex-1 min-w-[50px] py-2 px-1 rounded-xl text-xs font-bold text-center border transition-all duration-300 bg-white text-slate-400 border-slate-200 opacity-60">
                 Lansia
               </div>
             </div>
@@ -161,34 +182,46 @@
             </label>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               <label class="fit-option cursor-pointer">
-                <input type="radio" name="clothingFit" value="Regular Fit (Standar)" checked class="hidden peer" onchange="onFitChange(this)">
-                <div class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
+                <input type="radio" name="clothingFit" value="Regular Fit (Standar)" checked class="hidden peer"
+                  onchange="onFitChange(this)">
+                <div
+                  class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
                   <div class="text-xs font-bold group-hover:text-teal-600">Regular Fit</div>
-                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Standar Pas Badan</div>
+                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Standar Pas
+                    Badan</div>
                 </div>
               </label>
 
               <label class="fit-option cursor-pointer">
-                <input type="radio" name="clothingFit" value="Slim Fit (Pres Body)" class="hidden peer" onchange="onFitChange(this)">
-                <div class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
+                <input type="radio" name="clothingFit" value="Slim Fit (Pres Body)" class="hidden peer"
+                  onchange="onFitChange(this)">
+                <div
+                  class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
                   <div class="text-xs font-bold group-hover:text-teal-600">Slim Fit</div>
-                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Pres Body / Tight</div>
+                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Pres Body /
+                    Tight</div>
                 </div>
               </label>
 
               <label class="fit-option cursor-pointer">
-                <input type="radio" name="clothingFit" value="Oversized (Longgar / Loose)" class="hidden peer" onchange="onFitChange(this)">
-                <div class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
+                <input type="radio" name="clothingFit" value="Oversized (Longgar / Loose)" class="hidden peer"
+                  onchange="onFitChange(this)">
+                <div
+                  class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
                   <div class="text-xs font-bold group-hover:text-teal-600">Oversized</div>
-                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Longgar / Loose</div>
+                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Longgar / Loose
+                  </div>
                 </div>
               </label>
 
               <label class="fit-option cursor-pointer">
-                <input type="radio" name="clothingFit" value="Plus Size (Ukuran Besar / Big Size)" class="hidden peer" onchange="onFitChange(this)">
-                <div class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
+                <input type="radio" name="clothingFit" value="Plus Size (Ukuran Besar / Big Size)" class="hidden peer"
+                  onchange="onFitChange(this)">
+                <div
+                  class="p-3 rounded-2xl border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50/60 peer-checked:text-teal-800 hover:border-teal-300 transition-all text-center group">
                   <div class="text-xs font-bold group-hover:text-teal-600">Plus Size</div>
-                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Ukuran Jumbo / Big</div>
+                  <div class="text-[10px] text-slate-400 peer-checked:text-teal-600 font-medium mt-0.5">Ukuran Jumbo /
+                    Big</div>
                 </div>
               </label>
             </div>
